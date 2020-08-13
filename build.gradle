@@ -14,6 +14,7 @@ repositories {
 	maven { url 'http://server.bbkr.space:8081/artifactory/libs-release' }
 	maven { url 'http://server.bbkr.space:8081/artifactory/libs-snapshot' }
 	maven { url "https://minecraft.curseforge.com/api/maven" }
+	maven { url 'https://jitpack.io' }
 	mavenLocal()
 }
 
@@ -26,14 +27,14 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modApi "marioandweegee3:ml3api-fabric:${project.ml3api_version}"
+	modApi "com.github.NeRdTheNed:ML3API:${project.ml3api_version}"
 	modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}")
 	modApi "io.github.cottonmc:LibCD:${project.libcd_version}"
-	modApi "ninjaphenix:ninjaphenix-container-lib:${project.container_lib_version}"
+	modApi "com.github.NeRdTheNed:container-lib:${project.container_lib_version}"
 
-	include "marioandweegee3:ml3api-fabric:${project.ml3api_version}"
+	include "com.github.NeRdTheNed:ML3API:${project.ml3api_version}"
 	include "io.github.cottonmc:LibCD:${project.libcd_version}"
-	include "ninjaphenix:ninjaphenix-container-lib:${project.container_lib_version}"
+	include "com.github.NeRdTheNed:container-lib:${project.container_lib_version}"
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
