@@ -26,12 +26,12 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modCompile "marioandweegee3:ml3api:${project.ml3api_version}"
+	modApi "marioandweegee3:ml3api-fabric:${project.ml3api_version}"
 	modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}")
-	modCompile "io.github.cottonmc:LibCD:${project.libcd_version}"
+	modApi "io.github.cottonmc:LibCD:${project.libcd_version}"
 	modApi "ninjaphenix:ninjaphenix-container-lib:${project.container_lib_version}"
 
-	include "marioandweegee3:ml3api:${project.ml3api_version}"
+	include "marioandweegee3:ml3api-fabric:${project.ml3api_version}"
 	include "io.github.cottonmc:LibCD:${project.libcd_version}"
 	include "ninjaphenix:ninjaphenix-container-lib:${project.container_lib_version}"
 
