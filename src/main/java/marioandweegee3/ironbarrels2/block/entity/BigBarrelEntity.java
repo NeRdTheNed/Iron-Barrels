@@ -11,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.container.GenericContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventories;
@@ -19,13 +18,14 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Nameable;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -70,19 +70,19 @@ public class BigBarrelEntity extends BlockEntity implements SidedInventory, Name
     }
 
     @Override
-    public void fromTag(CompoundTag tag) {
-        super.fromTag(tag);
+    public void fromTag(BlockState state, CompoundTag tag) {
+        super.fromTag(state, tag);
         Inventories.fromTag(tag, inv);
         markDirty();
     }
 
     @Override
-    public int getInvSize() {
+    public int size() {
         return inv.size();
     }
 
     @Override
-    public boolean isInvEmpty() {
+    public boolean isEmpty() {
         return inv.isEmpty();
     }
 
@@ -122,9 +122,9 @@ public class BigBarrelEntity extends BlockEntity implements SidedInventory, Name
                     }
 
                     player = itr.next();
-                } while (!(player.container instanceof GenericContainer));
+                } while (!(player.currentScreenHandler instanceof GenericContainerScreenHandler));
 
-                inv = ((GenericContainer) player.container).getInventory();
+                inv = ((GenericContainerScreenHandler) player.currentScreenHandler).getInventory();
             } while (inv != barrelEntity && (!(inv instanceof DoubleInventory)
                     || !((DoubleInventory) inv).isPart(barrelEntity)));
 
@@ -137,7 +137,7 @@ public class BigBarrelEntity extends BlockEntity implements SidedInventory, Name
         this.world.getBlockTickScheduler().schedule(this.getPos(), this.getCachedState().getBlock(), 5);
     }
 
-    public void onInvOpen(PlayerEntity playerEntity_1) {
+    public void onOpen(PlayerEntity playerEntity_1) {
         if (!playerEntity_1.isSpectator()) {
             if (this.viewerCount < 0) {
                 this.viewerCount = 0;
@@ -155,7 +155,7 @@ public class BigBarrelEntity extends BlockEntity implements SidedInventory, Name
 
     }
 
-    public void onInvClose(PlayerEntity player) {
+    public void onClose(PlayerEntity player) {
         if (!player.isSpectator()) {
             --this.viewerCount;
         }
@@ -193,7 +193,7 @@ public class BigBarrelEntity extends BlockEntity implements SidedInventory, Name
     }
 
     @Override
-    public ItemStack getInvStack(int slot) {
+    public ItemStack getStack(int slot) {
         if(slot < 0 || slot >= inv.size()){
             IronBarrels.log("Invalid Slot "+slot);
             return ItemStack.EMPTY;
@@ -202,33 +202,33 @@ public class BigBarrelEntity extends BlockEntity implements SidedInventory, Name
     }
 
     @Override
-    public ItemStack takeInvStack(int slot, int amount) {
+    public ItemStack removeStack(int slot, int amount) {
         markDirty();
         return Inventories.splitStack(this.inv, slot, amount);
     }
 
     @Override
-    public ItemStack removeInvStack(int slot) {
+    public ItemStack removeStack(int slot) {
         markDirty();
         return Inventories.removeStack(this.inv, slot);
     }
 
     @Override
-    public void setInvStack(int slot, ItemStack stack) {
+    public void setStack(int slot, ItemStack stack) {
         if(slot < 0 || slot >= inv.size()){
             IronBarrels.log("Invalid Slot "+slot);
             return;
         }
 
         this.inv.set(slot, stack);
-        if (stack.getCount() > this.getInvMaxStackAmount()) {
-            stack.setCount(this.getInvMaxStackAmount());
+        if (stack.getCount() > this.getMaxCountPerStack()) {
+            stack.setCount(this.getMaxCountPerStack());
         }
         markDirty();
     }
 
     @Override
-    public boolean canPlayerUseInv(PlayerEntity player) {
+    public boolean canPlayerUse(PlayerEntity player) {
         assert this.world != null;
         if (this.world.getBlockEntity(this.pos) != this) {
             return false;
@@ -248,17 +248,17 @@ public class BigBarrelEntity extends BlockEntity implements SidedInventory, Name
     }
 
     @Override
-    public int[] getInvAvailableSlots(Direction side) {
+    public int[] getAvailableSlots(Direction side) {
         return IntStream.range(0, inv.size()).toArray();
     }
 
     @Override
-    public boolean canInsertInvStack(int slot, ItemStack stack, Direction dir) {
+    public boolean canInsert(int slot, ItemStack stack, Direction dir) {
         return true;
     }
 
     @Override
-    public boolean canExtractInvStack(int slot, ItemStack stack, Direction dir) {
+    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
         return true;
     }
 }

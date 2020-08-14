@@ -3,18 +3,18 @@ package marioandweegee3.ironbarrels2.block;
 import marioandweegee3.ironbarrels2.IronBarrels;
 import marioandweegee3.ironbarrels2.block.entity.BarrelEntities;
 import marioandweegee3.ironbarrels2.block.entity.BigBarrelEntity;
-import net.fabricmc.fabric.api.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.tools.FabricToolTags;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.container.Container;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.state.StateManager.Builder;
@@ -25,14 +25,14 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import ninjaphenix.containerlib.ContainerLibrary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-@SuppressWarnings("deprecation")
+//@SuppressWarnings("deprecation")
 public class BigBarrelBlock extends Block implements BlockEntityProvider, InventoryProvider {
     public static final DirectionProperty FACING = BarrelBlock.FACING;
     public static final BooleanProperty OPEN = BarrelBlock.OPEN;
@@ -61,7 +61,6 @@ public class BigBarrelBlock extends Block implements BlockEntityProvider, Invent
             .breakByTool(FabricToolTags.PICKAXES)
             .breakByHand(true)
             .strength(1, 2)
-            .build()
         );
         this.rows = rows;
         this.index = index;
@@ -84,7 +83,7 @@ public class BigBarrelBlock extends Block implements BlockEntityProvider, Invent
     }
 
     @Override
-    public SidedInventory getInventory(BlockState state, IWorld world, BlockPos pos) {
+    public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if(blockEntity instanceof BigBarrelEntity){
             return (BigBarrelEntity) blockEntity;
@@ -116,13 +115,13 @@ public class BigBarrelBlock extends Block implements BlockEntityProvider, Invent
         return true;
     }
 
-    @Override
+/*    @Override
     public boolean hasBlockEntity() {
         return true;
-    }
+    } */
 
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return Container.calculateComparatorOutput(world.getBlockEntity(pos));
+        return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
     }
 
     public BlockState rotate(BlockState blockState_1, BlockRotation blockRotation_1) {
@@ -133,16 +132,16 @@ public class BigBarrelBlock extends Block implements BlockEntityProvider, Invent
         return blockState_1.rotate(blockMirror_1.getRotation(blockState_1.get(FACING)));
     }
 
-    public void onBlockRemoved(BlockState blockState_1, World world_1, BlockPos blockPos_1, BlockState blockState_2,
+    public void onStateReplaced(BlockState blockState_1, World world_1, BlockPos blockPos_1, BlockState blockState_2,
             boolean boolean_1) {
         if (blockState_1.getBlock() != blockState_2.getBlock()) {
             BlockEntity blockEntity_1 = world_1.getBlockEntity(blockPos_1);
             if (blockEntity_1 instanceof Inventory) {
                 ItemScatterer.spawn(world_1, blockPos_1, (Inventory) blockEntity_1);
-                world_1.updateHorizontalAdjacent(blockPos_1, this);
+                world_1.updateComparators(blockPos_1, this);
             }
 
-            super.onBlockRemoved(blockState_1, world_1, blockPos_1, blockState_2, boolean_1);
+            super.onStateReplaced(blockState_1, world_1, blockPos_1, blockState_2, boolean_1);
         }
     }
 

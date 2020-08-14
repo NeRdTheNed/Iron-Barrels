@@ -19,8 +19,8 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -37,7 +37,7 @@ public class VanillaBarrelUpgradeKit extends Item {
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
 
-        tooltip.add(new TranslatableText("text.ironbarrels2.upgrade.vanilla").setStyle(new Style().setColor(Formatting.GRAY)));
+        tooltip.add(new TranslatableText("text.ironbarrels2.upgrade.vanilla").setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
     }
 
     public boolean upgrade(World world, BlockPos pos, BlockState original, ItemStack stack){
@@ -51,9 +51,9 @@ public class VanillaBarrelUpgradeKit extends Item {
 
         if(ChestBlockEntity.countViewers(world, barrel, pos.getX(), pos.getY(), pos.getZ()) > 0) return false;
 
-        DefaultedList<ItemStack> barrelItems = DefaultedList.ofSize(barrel.getInvSize(), ItemStack.EMPTY);
-        for(int i = 0; i < barrel.getInvSize(); i++){
-            barrelItems.set(i, barrel.getInvStack(i).copy());
+        DefaultedList<ItemStack> barrelItems = DefaultedList.ofSize(barrel.size(), ItemStack.EMPTY);
+        for(int i = 0; i < barrel.size(); i++){
+            barrelItems.set(i, barrel.getStack(i).copy());
         }
 
         Text name = barrel.getName();

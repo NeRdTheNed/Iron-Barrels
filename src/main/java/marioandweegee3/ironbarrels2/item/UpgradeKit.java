@@ -17,8 +17,8 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -40,7 +40,7 @@ public class UpgradeKit extends Item {
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
 
-        tooltip.add(getUpgradeText().setStyle(new Style().setColor(Formatting.GRAY)));
+        tooltip.add(getUpgradeText().setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
     }
 
     private TranslatableText getUpgradeText(){
@@ -70,9 +70,9 @@ public class UpgradeKit extends Item {
 
         if(BigBarrelEntity.countViewers(world, barrel, pos) > 0) return false;
 
-        DefaultedList<ItemStack> barrelItems = DefaultedList.ofSize(barrel.getInvSize(), ItemStack.EMPTY);
-        for(int i = 0; i < barrel.getInvSize(); i++){
-            barrelItems.set(i, barrel.getInvStack(i).copy());
+        DefaultedList<ItemStack> barrelItems = DefaultedList.ofSize(barrel.size(), ItemStack.EMPTY);
+        for(int i = 0; i < barrel.size(); i++){
+            barrelItems.set(i, barrel.getStack(i).copy());
         }
 
         @NotNull
